@@ -1,0 +1,8 @@
+##ROC curve##
+This code allows to define the ROC curve.
+The receiver operating characteristic (ROC) curves are used
+due to their comprehensive, understandable and visually
+attractive way of accuracy assessment. This method is used to validate
+a numerical flood risk model. The validation process was implemented
+by comparing the existing flood data with the acquired
+flood probability map.
