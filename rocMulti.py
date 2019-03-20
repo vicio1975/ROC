@@ -1,19 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-
+created by: Vincenzo Sammartano
+email: v.sammartano@gmail.com
 """
 ##IMPORT LIBS
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-clas = 1000
-startTime = time.time()
-###FUNCTIONS
 
-def Figures(nf,fign,Cols,X,Y):
-"""
-Creation of figure series
-"""
+###################
+##Number of classes
+clas = 10
+###################
+
+startTime = time.time()
+
+###FUNCTIONS section
+def Figures(nf,X,Y):
+    """
+    Creation of figure series
+    """
     font = {'family': 'Times New Roman',
             'color':  'black',
             'weight': 'normal',
@@ -24,6 +30,7 @@ Creation of figure series
     fign = "figure"+str(nf)
     fig = plt.figure(fign)
     axes1 = fig.add_axes([0.1,0.1,0.8,0.8])
+    Cols = X[0][:,:].shape[1]
     for i in range(Cols):
         axes1.plot(X[0][:,i],Y[0][:,i],'k',label="success",linestyle="--",linewidth=2)
         axes1.plot(X[1][:,i],Y[1][:,i],'k',label="prediction",linestyle="-",linewidth=2)
@@ -37,9 +44,10 @@ Creation of figure series
     fig.savefig(figname,dpi=600)
     plt.show(fig)
 
-
-
 def roc(ff, clas):
+    """
+    This is for ROC coefficient estimation
+    """
     data = np.loadtxt(ff, delimiter="\t") #data array
     Nrow = data.shape[0]
     Ncol = data.shape[1]
@@ -76,7 +84,6 @@ def roc(ff, clas):
             
             roc_x[ix, i-1] = (FP/(FP+TN))
             roc_y[ix, i-1] = (TP/(TP+FN))
-            #print(roc_x[ix,i],roc_y[ix,i])
             TP = 0
             FN = 0
             TN = 0
@@ -89,7 +96,7 @@ def roc(ff, clas):
         XROC = roc_x
         YROC = roc_y
 
-    return XROC,YROC #,area
+    return XROC,YROC
 ###### END
 
 
@@ -110,11 +117,23 @@ for nf in range(1,5):
         Xroc,Yroc = roc(fi,clas)
         X.append(Xroc)
         Y.append(Yroc)
-        #fi_out = fi
-        #f_out = fopen(fi_out,"w+")
-    Cols = Xroc.shape[1]    
-    Figures(nf,fign,Cols,X,Y)
-    
+        fi_out_Xroc = fi[:-4]+"_Xroc.txt"
+        fi_out_Yroc = fi[:-4]+"_Yroc.txt"
+        print("Writing the file {}".format(fi_out_Xroc))
+        print("Writing the file {}".format(fi_out_Yroc))
+        f_xroc = open(fi_out_Xroc,"w+")
+        f_yroc = open(fi_out_Yroc,"w+")
+        Cols = Xroc.shape[1]    
+        ## here please
+        for c in range(Cols):
+            f_xroc.write("{}\n".format(str(c+1)))
+            f_yroc.write("{}\n".format(str(c+1)))
+        f_xroc.close()
+        f_yroc.close()
+        
+
+    ###### Figure creation
+    #Figures(nf,X,Y)
     X = []
     Y = []
-print("Total time {}".format(time.time()-startTime))
+print("Total time {:5.3f} sec".format(time.time()-startTime))
