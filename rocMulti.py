@@ -9,6 +9,36 @@ import time
 clas = 1000
 startTime = time.time()
 ###FUNCTIONS
+
+def Figures(nf,fign,Cols,X,Y):
+"""
+Creation of figure series
+"""
+    font = {'family': 'Times New Roman',
+            'color':  'black',
+            'weight': 'normal',
+            'size': 18,
+            }
+    lst = ['-', "--"]
+    plt.rcParams["font.family"] = "Times New Roman"
+    fign = "figure"+str(nf)
+    fig = plt.figure(fign)
+    axes1 = fig.add_axes([0.1,0.1,0.8,0.8])
+    for i in range(Cols):
+        axes1.plot(X[0][:,i],Y[0][:,i],'k',label="success",linestyle="--",linewidth=2)
+        axes1.plot(X[1][:,i],Y[1][:,i],'k',label="prediction",linestyle="-",linewidth=2)
+        lx = axes1.set_xlabel('False Positive Rate',fontdict=font)
+        ly = axes1.set_ylabel('True Positive Rate',fontdict=font)
+##      x_ticks = np.linspace(0,1,5)
+##      y_ticks = x_ticks
+##      axes1.set_xticklabels(x_ticks, rotation=0, fontsize=16)
+##      axes1.set_yticklabels(y_ticks, rotation=0, fontsize=16)
+    figname = "roc_curve_"+str(nf)+".jpg"
+    fig.savefig(figname,dpi=600)
+    plt.show(fig)
+
+
+
 def roc(ff, clas):
     data = np.loadtxt(ff, delimiter="\t") #data array
     Nrow = data.shape[0]
@@ -68,18 +98,8 @@ X = []
 Y = []
 As = []
 Ap = []
-
-
 fname = []
 
-font = {'family': 'Times New Roman',
-        'color':  'black',
-        'weight': 'normal',
-        'size': 18,
-        }    ##Data to process
-
-lst = ['-', "--"]
-plt.rcParams["font.family"] = "Times New Roman"
 X = []
 Y = []
 for nf in range(1,5):
@@ -90,22 +110,11 @@ for nf in range(1,5):
         Xroc,Yroc = roc(fi,clas)
         X.append(Xroc)
         Y.append(Yroc)
-    fign = "figure"+str(nf)
-    fig = plt.figure(fign)
-    axes1 = fig.add_axes([0.1,0.1,0.8,0.8])
-        
-    for i in range(Xroc.shape[1]):
-        axes1.plot(X[0][:,i],Y[0][:,i],'k',label="success",linestyle="--",linewidth=2)
-        axes1.plot(X[1][:,i],Y[1][:,i],'k',label="prediction",linestyle="-",linewidth=2)
-        lx = axes1.set_xlabel('False Positive Rate',fontdict=font)
-        ly = axes1.set_ylabel('True Positive Rate',fontdict=font)
-##        x_ticks = np.linspace(0,1,5)
-##        y_ticks = x_ticks
-##        axes1.set_xticklabels(x_ticks, rotation=0, fontsize=16)
-##        axes1.set_yticklabels(y_ticks, rotation=0, fontsize=16)
-    figname = "roc_curve_"+str(nf)+".jpg"
-    fig.savefig(figname,dpi=600)
-    plt.show(fig)
+        #fi_out = fi
+        #f_out = fopen(fi_out,"w+")
+    Cols = Xroc.shape[1]    
+    Figures(nf,fign,Cols,X,Y)
+    
     X = []
     Y = []
 print("Total time {}".format(time.time()-startTime))
