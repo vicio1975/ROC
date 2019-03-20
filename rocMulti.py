@@ -6,7 +6,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-clas = 10
+clas = 1000
 startTime = time.time()
 ###FUNCTIONS
 def roc(ff, clas):
@@ -99,10 +99,10 @@ for nf in range(1,5):
         axes1.plot(X[1][:,i],Y[1][:,i],'k',label="prediction",linestyle="-",linewidth=2)
         lx = axes1.set_xlabel('False Positive Rate',fontdict=font)
         ly = axes1.set_ylabel('True Positive Rate',fontdict=font)
-        x_ticks = np.linspace(0,1,6)
-        y_ticks = x_ticks
-        axes1.set_xticklabels(x_ticks, rotation=0, fontsize=16)
-        axes1.set_yticklabels(y_ticks, rotation=0, fontsize=16)
+##        x_ticks = np.linspace(0,1,5)
+##        y_ticks = x_ticks
+##        axes1.set_xticklabels(x_ticks, rotation=0, fontsize=16)
+##        axes1.set_yticklabels(y_ticks, rotation=0, fontsize=16)
     figname = "roc_curve_"+str(nf)+".jpg"
     fig.savefig(figname,dpi=600)
     plt.show(fig)
