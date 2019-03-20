@@ -8,11 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import time
 
-###################
-##Number of classes
-clas = 10
-###################
-
 startTime = time.time()
 
 ###FUNCTIONS section
@@ -25,7 +20,7 @@ def Figures(nf,X,Y):
             'weight': 'normal',
             'size': 18,
             }
-    lst = ['-', "--"]
+    
     plt.rcParams["font.family"] = "Times New Roman"
     fign = "figure"+str(nf)
     fig = plt.figure(fign)
@@ -34,8 +29,8 @@ def Figures(nf,X,Y):
     for i in range(Cols):
         axes1.plot(X[0][:,i],Y[0][:,i],'k',label="success",linestyle="--",linewidth=2)
         axes1.plot(X[1][:,i],Y[1][:,i],'k',label="prediction",linestyle="-",linewidth=2)
-        lx = axes1.set_xlabel('False Positive Rate',fontdict=font)
-        ly = axes1.set_ylabel('True Positive Rate',fontdict=font)
+        axes1.set_xlabel('False Positive Rate',fontdict=font)
+        axes1.set_ylabel('True Positive Rate',fontdict=font)
 ##      x_ticks = np.linspace(0,1,5)
 ##      y_ticks = x_ticks
 ##      axes1.set_xticklabels(x_ticks, rotation=0, fontsize=16)
@@ -101,6 +96,9 @@ def roc(ff, clas):
 
 
 ###MAIN
+
+clas = 1000 #Number of classes
+
 X = []
 Y = []
 As = []
@@ -119,18 +117,12 @@ for nf in range(1,5):
         Y.append(Yroc)
         fi_out_Xroc = fi[:-4]+"_Xroc.txt"
         fi_out_Yroc = fi[:-4]+"_Yroc.txt"
+        Time1 = time.time()
         print("Writing the file {}".format(fi_out_Xroc))
+        np.savetxt(fi_out_Xroc, Xroc, delimiter="\t",fmt="%5.5f")
         print("Writing the file {}".format(fi_out_Yroc))
-        f_xroc = open(fi_out_Xroc,"w+")
-        f_yroc = open(fi_out_Yroc,"w+")
-        Cols = Xroc.shape[1]    
-        ## here please
-        for c in range(Cols):
-            f_xroc.write("{}\n".format(str(c+1)))
-            f_yroc.write("{}\n".format(str(c+1)))
-        f_xroc.close()
-        f_yroc.close()
-        
+        np.savetxt(fi_out_Yroc, Yroc, delimiter="\t",fmt="%5.5f")
+        print("Time per case {:5.3f} sec".format(time.time()-Time1))
 
     ###### Figure creation
     #Figures(nf,X,Y)
