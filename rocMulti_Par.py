@@ -7,8 +7,7 @@ email: v.sammartano@gmail.com
 import matplotlib.pyplot as plt
 import numpy as np
 import time
-
-startTime = time.time()
+import multiprocessing as mp
 
 ###FUNCTIONS section
 def Figures(nf,X,Y):
@@ -53,7 +52,7 @@ def roc(ff, clas):
   
     VF = data[:,0] #array of VF
 
-    for i in range(1,Ncol):
+    for i in range(1, Ncol):
         if (str(ff[-5]) == "4"):
             FRmin = abs(min(data[:,i]))
             data[:,i] = data[:,i] + FRmin
@@ -90,34 +89,61 @@ def roc(ff, clas):
     else:    
         XROC = roc_x
         YROC = roc_y
+
     return XROC,YROC
+
+def cores(clas, x, y, nf):
+    """
+    This is the core function of the code
+    """
+    fname = ["success"+str(nf)+".txt","prediction"+str(nf)+".txt"]
+    for fi in fname:
+        print(fi)
+        Xroc,Yroc = roc(fi, clas)
+        x.append(Xroc)
+        y.append(Yroc)
+        fi_out_Xroc = fi[:-4]+"_Xroc.txt"
+        fi_out_Yroc = fi[:-4]+"_Yroc.txt"
+        Time1 = time.time()
+        print("Writing the file {}".format(fi_out_Xroc))
+        np.savetxt(fi_out_Xroc, Xroc, delimiter="\t",fmt="%5.5f")
+        print("Writing the file {}".format(fi_out_Yroc))
+        np.savetxt(fi_out_Yroc, Yroc, delimiter="\t",fmt="%5.5f")
+        print("Time per case {:5.3f} sec".format(time.time()-Time1))
+
+    ###### Figure creation
+    #Figures(nf,x,y)
+    x = []
+    y = []
+
+
 ###### END Function
 
 ###MAIN
 if __name__ == "__main__":
-    startTime = time.time()
-    print("# Serial Computing #")
+    #startTime = time.time()
+    print("# Parallel Computing #")
     clas = 1000 #Number of classes
-    fname = []
-    X = []
-    Y = []
-    for nf in range(1,5):
-        fname = ["success"+str(nf)+".txt","prediction"+str(nf)+".txt"]
-        for fi in fname:
-            print(fi)
-            Xroc,Yroc = roc(fi,clas)
-            X.append(Xroc)
-            Y.append(Yroc)
-            fi_out_Xroc = fi[:-4]+"_Xroc.txt"
-            fi_out_Yroc = fi[:-4]+"_Yroc.txt"
-            Time1 = time.time()
-            print("Writing the file {}".format(fi_out_Xroc))
-            np.savetxt(fi_out_Xroc, Xroc, delimiter="\t",fmt="%5.5f")
-            print("Writing the file {}".format(fi_out_Yroc))
-            np.savetxt(fi_out_Yroc, Yroc, delimiter="\t",fmt="%5.5f")
-            print("Time per case {:5.3f} sec".format(time.time()-Time1))
-        ###### Figure creation
-        #Figures(nf,X,Y)
+    npr = []
+    for i in list(range(2,9)): 
+        startTime = time.time()
+        Nproc = i  #mp.cpu_count()
+        #print("Number of processors: ", Nproc)
         X = []
         Y = []
-    print("Total time {:5.3f} sec".format(time.time()-startTime))
+        nfiles = list(range(1,5))
+        # Step 1: Init multiprocessing.Pool()
+        pool = mp.Pool(Nproc)
+        # Step 2: `pool.apply` the `howmany_within_range()`
+        pool.starmap(cores, [(clas, X, Y, nf) for nf in nfiles])
+     
+        pool.close()
+        
+        print("Total time {:5.3f} sec".format(time.time()-startTime))
+        npr.append(time.time()-startTime)
+    fign = "figure1"
+    fig = plt.figure(fign)
+    axes1 = fig.add_axes([0.1,0.1,0.8,0.8])
+    axes1.plot(list(range(2,13)),npr,'k',label="success",linestyle="--",linewidth=2)
+    axes1.set_xlabel('Number of cores')
+    axes1.set_ylabel('time')
