@@ -125,25 +125,15 @@ if __name__ == "__main__":
     print("# Parallel Computing #")
     clas = 1000 #Number of classes
     npr = []
-    for i in list(range(2,9)): 
-        startTime = time.time()
-        Nproc = i  #mp.cpu_count()
-        #print("Number of processors: ", Nproc)
-        X = []
-        Y = []
-        nfiles = list(range(1,5))
-        # Step 1: Init multiprocessing.Pool()
-        pool = mp.Pool(Nproc)
-        # Step 2: `pool.apply` the `howmany_within_range()`
-        pool.starmap(cores, [(clas, X, Y, nf) for nf in nfiles])
-     
-        pool.close()
-        
-        print("Total time {:5.3f} sec".format(time.time()-startTime))
-        npr.append(time.time()-startTime)
-    fign = "figure1"
-    fig = plt.figure(fign)
-    axes1 = fig.add_axes([0.1,0.1,0.8,0.8])
-    axes1.plot(list(range(2,13)),npr,'k',label="success",linestyle="--",linewidth=2)
-    axes1.set_xlabel('Number of cores')
-    axes1.set_ylabel('time')
+    startTime = time.time()
+    Nproc = 5  #mp.cpu_count()
+    print("Number of processors: ", Nproc)
+    X = []
+    Y = []
+    nfiles = list(range(1,5))
+    # Step 1: Init multiprocessing.Pool()
+    pool = mp.Pool(Nproc)
+    # Step 2: `pool.apply` the `howmany_within_range()`
+    pool.starmap(cores, [(clas, X, Y, nf) for nf in nfiles])
+    pool.close()
+    print("Total time {:5.3f} sec".format(time.time()-startTime))
